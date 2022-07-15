@@ -140,16 +140,18 @@ As extreme, mostly illustrative, goal, we'd also like to explore [Interplanetary
 </table>
 
 ### Interplanetary Computation
+
 There are already massive <a href="https://en.wikipedia.org/wiki/Interplanetary_Internet">Interplanetary Internet</a> initiatives underway as space exploration missions start to unify communication between various elements of their space hardware.
 
 We want to expand it from communication and storage to computation as well - primarily because the analogy with current web application topologies is clear and exhaggerated constraints would make it easier to imagine a need for Borderless computing.
 
 Imagine that a Mars rover needs to execute some code, we have a few options here:
-* Execute it on the rover computer itself, where CPU, energy, storage capacity and temperatures of the environment are extremely constrained
-* Communicate with a local, on-Mars stationary computer (just imagine that we already have them) where energy needs are probably solved a bit better, environment is better controlled and with no need to move, larger equipment with more storage and CPU are deployed
-* Alternatively, it can communicate (as it currently does) with orbiting stations that have relatively good bandwidth as Mars atmosphere is thinner then Earths and communications are easier to intercept. Those stations also have larger solar panels and communication dishes because there is less debree and gravity making it easier to deploy
-* Those ground or orbital stations can also communicate with Earth's orbital or ground stations and request computation to be done further upstream
-* With lunar mission, we can imagine more intermediate hops becoming available as well
+
+- Execute it on the rover computer itself, where CPU, energy, storage capacity and temperatures of the environment are extremely constrained
+- Communicate with a local, on-Mars stationary computer (just imagine that we already have them) where energy needs are probably solved a bit better, environment is better controlled and with no need to move, larger equipment with more storage and CPU are deployed
+- Alternatively, it can communicate (as it currently does) with orbiting stations that have relatively good bandwidth as Mars atmosphere is thinner then Earths and communications are easier to intercept. Those stations also have larger solar panels and communication dishes because there is less debree and gravity making it easier to deploy
+- Those ground or orbital stations can also communicate with Earth's orbital or ground stations and request computation to be done further upstream
+- With lunar mission, we can imagine more intermediate hops becoming available as well
 
 All these options or a combination of them can be chosen under certain conditions.
 
@@ -164,6 +166,7 @@ All this helps us macro-model the needs that we similarly have in our earthly, m
 So we encourage you to keep the interplanetary use-case in your mind when you discuss, architect and build Borderless framework and ultimately applications that it would power.
 
 ## How Will It Work?
+
 Developers use a language that can be executed / transpiled or compiled into the target running on all supported platforms. At the beginning we will use JavaScript, but WebAssembly can be another alternative for web, other languages compiled into target executables potentially too for non-web applications.
 
 All the functions that can be called are annotated or "registered" providing all the metadata needed to make a decision which environments can support running it and which have to delegate to the upstream execution environment(or potentially a mesh in the future).
@@ -181,60 +184,71 @@ As code get wrapped into topology decision logic, it can also include speed inst
 Same telemetry data could be used to [dynamically change the topology](#machine-learning).
 
 ### Code registration requirements
-* Required APIs (e.g. Web APIs, databases, file/storage access)
-* Required latency range
-* Data lifecycle / freshness policies
-* Async execution as any part of the code might need to require to wait
+
+- Required APIs (e.g. Web APIs, databases, file/storage access)
+- Required latency range
+- Data lifecycle / freshness policies
+- Async execution as any part of the code might need to require to wait
 
 ## Misc Notes
+
 Below are some notes that should or should not be taken into account when designing a Borderless system.
 
 ### Notes on Formats
+
 Different parts of the topology can operate and produce different formats.
 
 It is unclear how this plays into the overall framework and if it should abstract it away or concentrate on specific flows and transformations.
 
 Here are a few use-cases that are currently are pretty clear and are widely used in the industry:
-* "Static-generation" workflow when Build pipeline generates HTML that is deployed to other environments and ultimately to rendering pipeline in the browser *before user makes a request* reducing latency to possible minimum. This use-case is popularized by JAMstack and got birth to services like Netlify that specializes in that
-* All environments can get code as input and produce HTML at runtime for browser rendering pipeline to consume - this is the classic web development
-* All environments can produce data (serialized in JSON, for example) which downstream environments can render (this includes non-HTML rendering environments like mobile apps or IoT devices and etc)
-* Build pipelines convert code in one language into destination languages and packages (traditional CI/CD) to be executed in other environments
-* Some environments can execute code in various languages
-* Some environments can execute WebAssembly which in turn can be a compilation target for some languages
+
+- "Static-generation" workflow when Build pipeline generates HTML that is deployed to other environments and ultimately to rendering pipeline in the browser _before user makes a request_ reducing latency to possible minimum. This use-case is popularized by JAMstack and got birth to services like Netlify that specializes in that
+- All environments can get code as input and produce HTML at runtime for browser rendering pipeline to consume - this is the classic web development
+- All environments can produce data (serialized in JSON, for example) which downstream environments can render (this includes non-HTML rendering environments like mobile apps or IoT devices and etc)
+- Build pipelines convert code in one language into destination languages and packages (traditional CI/CD) to be executed in other environments
+- Some environments can execute code in various languages
+- Some environments can execute WebAssembly which in turn can be a compilation target for some languages
 
 ### Notes on moment of execution
+
 This framework should unify various execution patterns in order to be able to convert code from one mode of operation into another based on performance requirements and data freshness requirements.
 
-* Some operations can execute code upon request so users get the latest and greatest data (traditional, 3-tier web development)
-* Some operations require real-time visualization and very low latency (e.g. gameplay)
-* Some operations can be done when data changes, but and can be less than fresh
-* Some environments can have intermittent connectivity (e.g. progressive web apps, mobile apps) and should have flexible data policies and fallbacks for all, some, or no data (based on business functionality), but can produce a useful feedback for the user in as many cases as possible
-* Some operations can be performed in a batch manner because data freshness policy accepts large latency, but data volumes, CPU and power consumption are a large and require cost optimization (machine learning applications, vendor data sync, etc.)
+- Some operations can execute code upon request so users get the latest and greatest data (traditional, 3-tier web development)
+- Some operations require real-time visualization and very low latency (e.g. gameplay)
+- Some operations can be done when data changes, but and can be less than fresh
+- Some environments can have intermittent connectivity (e.g. progressive web apps, mobile apps) and should have flexible data policies and fallbacks for all, some, or no data (based on business functionality), but can produce a useful feedback for the user in as many cases as possible
+- Some operations can be performed in a batch manner because data freshness policy accepts large latency, but data volumes, CPU and power consumption are a large and require cost optimization (machine learning applications, vendor data sync, etc.)
 
 ### Notes on mobile apps
+
 Mobile applications and web applications share majority of the logic and data requirements, but have a significantly different rendering technologies and release cycles.
 
 ### Notes on IoT devices
+
 IoT devices usually have low rendering requirements, and some data consumtion requirements, but often concentrate on producing data and sending it back into central storage.
 
 This "data source" behavior can also be included here because this potentially applies to other applications like telemetry or business analytics flows.
 
 ### Notes on topology
+
 We envision multiple types of topology decisions:
-* Configuration - similar to traditional operations / DevOps workflow that defines the systems code deploys to
-* Run-time scalability adjustments - similar to modern DevOps workflows that scales some types of environments up/down in order to support consumption needs or to selectively shut down parts of the system in case of an outage
-* Run-time decisions based on environment capabilities:
- * Progressively Enhanced Single-page Applications that use so-called Server-Side rendering (SSR) can use one topology to produce HTML for initial view, but another topology for subsequent views that use front-end routing
- * Progressive Web Applications (PWAs) use one topology for first request (when user has never been to the site), but another for subsequent requests when Service Worker (installed after first request) can take over some operations.
-* Run-time decisions based on users device capabilities, e.g. network speed, CPU power, battery levels, etc. Off-loading large computations to the server in case of low-powered devices or running them with much lower latency in web workers, for example (there multiple use-cases with data analysis and visualization, machine learning, media format processing and etc.)
-* Run-time decisions based on users location or content preferences, e.g. geo-fencing or language
+
+- Configuration - similar to traditional operations / DevOps workflow that defines the systems code deploys to
+- Run-time scalability adjustments - similar to modern DevOps workflows that scales some types of environments up/down in order to support consumption needs or to selectively shut down parts of the system in case of an outage
+- Run-time decisions based on environment capabilities:
+- Progressively Enhanced Single-page Applications that use so-called Server-Side rendering (SSR) can use one topology to produce HTML for initial view, but another topology for subsequent views that use front-end routing
+- Progressive Web Applications (PWAs) use one topology for first request (when user has never been to the site), but another for subsequent requests when Service Worker (installed after first request) can take over some operations.
+- Run-time decisions based on users device capabilities, e.g. network speed, CPU power, battery levels, etc. Off-loading large computations to the server in case of low-powered devices or running them with much lower latency in web workers, for example (there multiple use-cases with data analysis and visualization, machine learning, media format processing and etc.)
+- Run-time decisions based on users location or content preferences, e.g. geo-fencing or language
 
 #### Machine Learning
+
 Topology can also be dynamically optimized based on telemetry that comes from all the environments about execution speeds, failure rates and business outcomes.
 
 Machine learning can be used, in analogy with how optimizing JIT compilers optimize code in browsers, topology optimizer can perform optimization of topology to minimize latency and/or to maximize business KPIs.
 
 ## Participants
+
 I say "we" when referring to the team that would work on this project, but so far this was only born in my brain.
 
 I talked about it to a few people and hope to attract more eyes and brains to this project and hopefully, it will lead to the project's progress and success.
