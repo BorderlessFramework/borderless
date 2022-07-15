@@ -84,7 +84,7 @@ As extreme, mostly illustrative, goal, we'd also like to explore [Interplanetary
     <td>Bundled</td>
     <td></td>
     <td>HTTP (fetch), postMessage</td>
-    <td>50 - 200</td>
+    <td>50 - 350</td>
     <th>Low, Medium, High</th>
     <th>Low, Medium, High</th>
     <th>Low, Medium</th>
