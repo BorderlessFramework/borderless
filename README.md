@@ -215,7 +215,7 @@ This framework should unify various execution patterns in order to be able to co
 
 - Some operations can execute code upon request so users get the latest and greatest data (traditional, 3-tier web development)
 - Some operations require real-time visualization and very low latency (e.g. gameplay)
-- Some operations can be done when data changes, but and can be less than fresh
+- Some operations can be done when data changes, but can be less than freshest (event-based build pipeline)
 - Some environments can have intermittent connectivity (e.g. progressive web apps, mobile apps) and should have flexible data policies and fallbacks for all, some, or no data (based on business functionality), but can produce a useful feedback for the user in as many cases as possible
 - Some operations can be performed in a batch manner because data freshness policy accepts large latency, but data volumes, CPU and power consumption are a large and require cost optimization (machine learning applications, vendor data sync, etc.)
 
