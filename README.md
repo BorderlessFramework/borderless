@@ -177,7 +177,7 @@ When code is to be deployed, in addition to source code, each project would incl
 
 Each package will include the code that can run in that environment, transpiled with support for language properties of the environment (e.g. target format, ES modules support vs. bundled, polifills for APIs that can be polyfilled and etc.).
 
-It will also include the environment configuration file `environment.js` ([1](dist/main-site/js/environment.js),[2](dist/my-node-backend/environment.js)) that dictates which function calls have to be fulfilled locally and which have to be routed through a communication protocol to a set of upstream locations (we'll support HTTP for network and postMessage for worker communication in the browser to start).
+It will also include the environment configuration file `environment.js` ([1](dist/main-site/pub/js/environment.js),[2](dist/main-site/server/environment.js)) that dictates which function calls have to be fulfilled locally and which have to be routed through a communication protocol to a set of upstream locations (we'll support HTTP for network and postMessage for worker communication in the browser to start).
 
 As code get wrapped into topology decision logic, it can also include speed instrumentation that would report telemetry data to the operations datacenter and help with visual understanding of code execution and will allow operators to modify and deploy topology changes as needed.
 
