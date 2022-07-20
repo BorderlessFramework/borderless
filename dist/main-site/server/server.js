@@ -10,12 +10,12 @@
  */
 import express from "express";
 
-import handler from "./dist/my-node-backend/app.js";
+import handler from "./app.js";
 
 const app = express();
 const port = 3000;
 
-app.use(express.static("dist/main-site"));
+app.use(express.static("pub/"));
 
 app.use(express.json());
 

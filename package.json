@@ -4,7 +4,7 @@
   "description": "Framework for transparently running code anywhere",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "cd dist/main-site/; node server/server.js",
     "compile": "node compiler.js source.js output.js"
   },
   "author": "Sergey Chernyshev",

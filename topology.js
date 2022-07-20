@@ -23,12 +23,16 @@ module.exports = {
       name: "static-html-page",
       type: "html",
       package: "main-site",
+      upstream: "my-app-in-browser",
+      path: "pub/",
     },
     {
       name: "my-app-in-browser",
       type: "main_thread",
       local: ["blah", "glog"],
       upstream: "my-node-backend",
+      package: "main-site",
+      path: "pub/js/",
     },
     {
       name: "my-node-backend",
@@ -39,6 +43,7 @@ module.exports = {
         method: "post",
       },
       package: "main-site",
+      path: "server/",
     },
   ],
 };
