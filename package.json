@@ -9,7 +9,8 @@
     "instrument": "node cli.js instrument --src example/src/ --inst example/inst/",
     "pack": "node cli.js pack --inst example/inst/ --dist example/dist/",
     "clean": "rm -rf example/inst/ example/dist/",
-    "diagrams": "cd docs/diagrams; dot -Tsvg -O *.gv; mv *.svg images/"
+    "diagrams": "cd docs/diagrams; dot -Tsvg -O *.gv; mv *.svg images/",
+    "npm-publish": "npm publish --access public"
   },
   "bin": {
     "borderless": "./cli.js"
