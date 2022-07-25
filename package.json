@@ -1,6 +1,6 @@
 {
   "name": "@borderlessjs/borderless",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Framework for transparently running code anywhere",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "dependencies": {
     "@babel/core": "^7.18.9",
     "@babel/traverse": "^7.18.9",
+    "@borderlessjs/babel-plugin": "^0.0.1",
     "express": "^4.18.1",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
