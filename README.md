@@ -173,11 +173,11 @@ All the functions that can be called are annotated or "registered" providing all
 
 Initially, registration will have to happen in the code, but we can imagine a compiler that could read annotations and even do code analysis to deduce some of the properties of the code.
 
-When code is to be deployed, in addition to source code, each project would include a configuraton file ([`topology.js`](topology_mockup.js)) that defines execution environments available to run it and `build` infrastructure will be used to compile deployable packages for each of the target environments.
+When code is to be deployed, in addition to source code, each project would include a configuraton file ([`topology.js`](app_mockup/topology.js)) that defines execution environments available to run it and `build` infrastructure will be used to compile deployable packages for each of the target environments.
 
 Each package will include the code that can run in that environment, transpiled with support for language properties of the environment (e.g. target format, ES modules support vs. bundled, polifills for APIs that can be polyfilled and etc.).
 
-It will also include the environment configuration file `environment.js` ([1](dist_mockup/main-site/pub/js/environment.js),[2](dist_mockup/main-site/server/environment.js)) that dictates which function calls have to be fulfilled locally and which have to be routed through a communication protocol to a set of upstream locations (we'll support HTTP for network and postMessage for worker communication in the browser to start).
+It will also include the environment configuration file `environment.js` ([1](app_mockup/dist/main-site/pub/js/environment.js),[2](app_mockup/dist/main-site/server/environment.js)) that dictates which function calls have to be fulfilled locally and which have to be routed through a communication protocol to a set of upstream locations (we'll support HTTP for network and postMessage for worker communication in the browser to start).
 
 As code get wrapped into topology decision logic, it can also include speed instrumentation that would report telemetry data to the operations datacenter and help with visual understanding of code execution and will allow operators to modify and deploy topology changes as needed.
 
