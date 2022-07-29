@@ -73,6 +73,23 @@ yargs(hideBin(process.argv))
     }
   )
   .command(
+    "version",
+    "Logs version of the CLI and borderless package",
+    (yargs) => {
+      return yargs;
+    },
+    async (argv) => {
+      const rawdata = fse.readFileSync(
+        new URL("package.json", import.meta.url),
+        "utf-8"
+      );
+      const package_json = JSON.parse(rawdata);
+      console.info(
+        `@borderlessjs/borderless package and cli version: ${package_json.version}`
+      );
+    }
+  )
+  .command(
     "$0",
     "borderless cli is used to compile an instrumented version of the source code and pack it for environments listed in topology file in your project",
     (yargs) => {
