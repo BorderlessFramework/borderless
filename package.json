@@ -1,14 +1,15 @@
 {
   "name": "@borderlessjs/borderless",
-  "version": "0.0.2",
+  "version": "0.0.3-dev",
   "description": "Framework for transparently running code anywhere",
   "main": "index.js",
   "scripts": {
     "start": "cd dist_mockup/main-site/; node server/server.js",
-    "cli": "cd example; node ../cli.js",
-    "instrument": "node cli.js instrument --src example/src/ --inst example/inst/",
-    "pack": "node cli.js pack --inst example/inst/ --dist example/dist/",
     "clean": "rm -rf example/inst/ example/dist/",
+    "test:instrument": "node cli.js instrument --src example/src/ --inst example/inst/",
+    "test:pack": "node cli.js pack --inst example/inst/ --dist example/dist/ --topology example/topology.js",
+    "dev:npm-publish": "npm publish --access public",
+    "dev:link-local": "npm link @borderlessjs/env-html @borderlessjs/env-node @borderlessjs/env-main-thread",
     "diagrams": "cd docs/diagrams; dot -Tsvg -O *.gv; mv *.svg images/",
     "npm-publish": "npm publish --access public"
   },

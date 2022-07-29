@@ -6,6 +6,7 @@ import { hideBin } from "yargs/helpers";
 import path from "path";
 import fse from "fs-extra";
 import glob from "glob";
+import { fileURLToPath } from "node:url";
 
 import babel from "@babel/core";
 
@@ -80,7 +81,7 @@ yargs(hideBin(process.argv))
     },
     async (argv) => {
       const rawdata = fse.readFileSync(
-        new URL("package.json", import.meta.url),
+        fileURLToPath(new URL("package.json", import.meta.url)),
         "utf-8"
       );
       const package_json = JSON.parse(rawdata);
@@ -146,10 +147,55 @@ async function instrument(source, pattern, inst) {
   return Promise.all(promises);
 }
 
-async function pack(topology, inst, dist) {
+async function pack(topology_filename, inst, dist) {
   console.log(`Removing ${dist} if it exists.`);
   fse.removeSync(dist);
 
-  console.log(`Packing environments ${inst} -> ${dist} using ${topology}\n`);
-  fse.copySync(inst, dist);
+  const resolved_topology_filename = path.resolve(topology_filename);
+
+  console.log(
+    `Packing environments ${inst} -> ${dist} using ${topology_filename}\n`
+  );
+
+  const topology = (await import(resolved_topology_filename)).default;
+
+  topology.environments.forEach(async (env) => {
+    let destinationPaths = [dist];
+
+    // if environment outputs into a packlage use it
+    // instead of environment name
+    if (env.package) {
+      const targetPackage = topology.packages.find(
+        (pkg) => pkg.name === env.package
+      );
+
+      destinationPaths.push(targetPackage.name);
+    } else {
+      destinationPaths.push(env.name);
+    }
+
+    // if environment defined a path, add it
+    if (env.path) {
+      destinationPaths.push(env.path);
+    }
+
+    const borderlessModule = (await import(env.type)).default();
+
+    // folder with  boilerplate code for the module
+    let boilerplate = borderlessModule.boilerplate;
+
+    // folder where to keep all output for this environment
+    let packRoot = path.resolve(...destinationPaths);
+
+    if (boilerplate) {
+      fse.copySync(boilerplate, packRoot);
+    }
+
+    // relative path where to copy instrumented code into
+    let src = path.resolve(packRoot, borderlessModule.src);
+
+    fse.copySync(inst, src);
+
+    console.info(`${env.name} : ${packRoot}`);
+  });
 }

@@ -1,7 +1,8 @@
 /**
  * This is the source code that one would write
  *
- * Run `npm run compile` to generate `output.js` file to see how it will be wrapped into registration calls and forced to be asyncronous
+ * Run borderless instrumentation compiler to generate `output.js` file
+ * to see how it will be wrapped into registration calls and forced to be asyncronous
  *
  * It will also be further transformed and output into several packages based on topology.js configuration file
  */
