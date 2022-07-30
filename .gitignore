@@ -3,3 +3,4 @@ output.js
 /node_modules/
 /test/example/dist/
 /test/example/inst/
+/test/example/build/
