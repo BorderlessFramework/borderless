@@ -11,15 +11,16 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "child_process";
 
 import babel from "@babel/core";
+import { exit } from "process";
 
-const DEFAULT_SRC = "src/";
+const DEFAULT_SRC_FOLDER = "src/";
 const DEFAULT_PATTERN = "**/*.js";
-const DEFAULT_INST = "inst/";
+const DEFAULT_INST_FOLDER = "inst/";
 const DEFAULT_TOPOLOGY = "topology.js";
 
-const DEFAULT_BUILD = "build/";
+const DEFAULT_BUILD_FOLDER = "build/";
 
-const DEFAULT_DIST = "dist/";
+const DEFAULT_DIST_FOLDER = "dist/";
 
 yargs(hideBin(process.argv))
   .command(
@@ -29,7 +30,7 @@ yargs(hideBin(process.argv))
       return yargs
         .option("src", {
           describe: "folder to read source code from",
-          default: DEFAULT_SRC,
+          default: DEFAULT_SRC_FOLDER,
         })
         .option("pattern", {
           describe: "pattern that defines which files to include",
@@ -37,13 +38,13 @@ yargs(hideBin(process.argv))
         })
         .option("inst", {
           describe: "name for the instrumented output folder",
-          default: DEFAULT_INST,
+          default: DEFAULT_INST_FOLDER,
         });
     },
     async (argv) => {
       if (argv.verbose) {
         console.info(
-          `instrument the code in ${argv.src}/${argv.pattern} and output it into ${argv.inst}.\n`
+          `Instrumenting the code in ${argv.src}/${argv.pattern} and outputting it into ${argv.inst}.\n`
         );
       }
       await instrument(argv.src, argv.pattern, argv.inst);
@@ -60,17 +61,17 @@ yargs(hideBin(process.argv))
         })
         .option("inst", {
           describe: "name for the instrumented folder",
-          default: DEFAULT_INST,
+          default: DEFAULT_INST_FOLDER,
         })
         .option("build", {
           describe: "name for the build folder",
-          default: DEFAULT_BUILD,
+          default: DEFAULT_BUILD_FOLDER,
         });
     },
     async (argv) => {
       if (argv.verbose) {
-        console.info(
-          `generate build directories with code from ${argv.inst} for each environment listed in topology file and output them into ${argv.build}\n`
+        console.log(
+          `Generating environments ${argv.inst} -> ${argv.build} using ${argv.topology} topology file\n`
         );
       }
 
@@ -88,13 +89,13 @@ yargs(hideBin(process.argv))
         })
         .option("build", {
           describe: "name for the build folder",
-          default: DEFAULT_BUILD,
+          default: DEFAULT_BUILD_FOLDER,
         });
     },
     async (argv) => {
       if (argv.verbose) {
-        console.info(
-          `build the code for each generated environment in ${argv.build} listed in ${argv.topology} topology file\n`
+        console.log(
+          `Building code in all environments within ${argv.build} using ${argv.topology} topology file\n`
         );
       }
 
@@ -112,21 +113,45 @@ yargs(hideBin(process.argv))
         })
         .option("build", {
           describe: "name for the build folder",
-          default: DEFAULT_BUILD,
+          default: DEFAULT_BUILD_FOLDER,
         })
         .option("dist", {
           describe: "name for the output folder",
-          default: DEFAULT_DIST,
+          default: DEFAULT_DIST_FOLDER,
+        });
+    },
+    async (argv) => {
+      if (argv.verbose) {
+        console.log(
+          `Packing environments ${argv.build} -> ${argv.dist} using ${argv.topology}\n`
+        );
+      }
+
+      await pack(argv.topology, argv.build, argv.dist);
+    }
+  )
+  .command(
+    "deploy",
+    "deploys all the packages to their destinations",
+    (yargs) => {
+      return yargs
+        .option("topology", {
+          describe: "topology file name",
+          default: DEFAULT_TOPOLOGY,
+        })
+        .option("dist", {
+          describe: "name for the output folder",
+          default: DEFAULT_DIST_FOLDER,
         });
     },
     async (argv) => {
       if (argv.verbose) {
         console.info(
-          `package the code for each environment in ${argv.build} listed in ${argv.topology} topology file and output it into ${argv.dist}\n`
+          `deploys all the packages from ${argv.dist} folder to their destinations using ${argv.topology}\n`
         );
       }
 
-      await pack(argv.topology, argv.build, argv.dist);
+      await deploy(argv.topology, argv.dist);
     }
   )
   .command(
@@ -157,10 +182,19 @@ yargs(hideBin(process.argv))
         console.info(`Instrument and pack with default folders/files\n`);
       }
 
-      await instrument(DEFAULT_SRC, DEFAULT_PATTERN, DEFAULT_INST);
-      await generate(DEFAULT_TOPOLOGY, DEFAULT_INST, DEFAULT_BUILD);
-      await build(DEFAULT_TOPOLOGY, DEFAULT_BUILD);
-      await pack(DEFAULT_TOPOLOGY, DEFAULT_BUILD, DEFAULT_DIST);
+      await instrument(
+        DEFAULT_SRC_FOLDER,
+        DEFAULT_PATTERN,
+        DEFAULT_INST_FOLDER
+      );
+      await generate(
+        DEFAULT_TOPOLOGY,
+        DEFAULT_INST_FOLDER,
+        DEFAULT_BUILD_FOLDER
+      );
+      await build(DEFAULT_TOPOLOGY, DEFAULT_BUILD_FOLDER);
+      await pack(DEFAULT_TOPOLOGY, DEFAULT_BUILD_FOLDER, DEFAULT_DIST_FOLDER);
+      await deploy(DEFAULT_DIST_FOLDER);
     }
   )
   .option("verbose", {
@@ -174,8 +208,6 @@ yargs(hideBin(process.argv))
 async function instrument(source, pattern, instFolder) {
   console.log(`Removing ${instFolder} if it exists.`);
   fse.removeSync(instFolder);
-
-  console.log(`Running instrumentation ${source} -> ${instFolder}`);
 
   const files = glob.sync(pattern, {
     cwd: source,
@@ -209,10 +241,6 @@ async function generate(topologyFilename, instFolder, buildFolder) {
   console.log(`Removing ${buildFolder} if it exists.`);
   fse.removeSync(buildFolder);
 
-  console.log(
-    `Generating environments ${instFolder} -> ${buildFolder} using ${topologyFilename} topology file\n`
-  );
-
   const topology = await getTopology(topologyFilename);
 
   topology.environments.forEach(async (env) => {
@@ -238,10 +266,6 @@ async function generate(topologyFilename, instFolder, buildFolder) {
 }
 
 async function build(topologyFilename, buildFolder) {
-  console.log(
-    `Building code in all environments within ${buildFolder} using ${topologyFilename} topology file\n`
-  );
-
   const topology = await getTopology(topologyFilename);
 
   topology.environments.forEach(async (env) => {
@@ -269,19 +293,15 @@ async function build(topologyFilename, buildFolder) {
   });
 }
 
-async function pack(topologyFilename, buildFolder, dist) {
-  console.log(`Removing ${dist} if it exists.`);
-  fse.removeSync(dist);
-
-  console.log(
-    `Packing environments ${buildFolder} -> ${dist} using ${topologyFilename}\n`
-  );
+async function pack(topologyFilename, buildFolder, distFolder) {
+  console.log(`Removing ${distFolder} if it exists.`);
+  fse.removeSync(distFolder);
 
   const topology = await getTopology(topologyFilename);
 
   topology.environments.forEach(async (env) => {
     let buildPaths = [buildFolder, env.name];
-    let distPaths = [dist];
+    let distPaths = [distFolder];
 
     // if environment outputs into a packlage use it
     // instead of environment name
@@ -318,6 +338,64 @@ async function pack(topologyFilename, buildFolder, dist) {
   });
 }
 
+async function deploy(topologyFilename, distFolder) {
+  const topology = await getTopology(topologyFilename);
+
+  const deployments = [];
+
+  topology.environments.forEach(async (env) => {
+    let depPaths = [distFolder];
+    let depModuleType;
+    let depName;
+    let depConfig;
+
+    // if environment outputs into a packlage,
+    // use it instead of the environment
+    if (env.package) {
+      const targetPackage = topology.packages.find(
+        (pkg) => pkg.name === env.package
+      );
+
+      depPaths.push(targetPackage.name);
+      depModuleType = targetPackage.type;
+      depName = targetPackage.name;
+      depConfig = targetPackage.deploy;
+    } else {
+      depPaths.push(env.name);
+      depModuleType = env.type;
+      depName = env.name;
+      depConfig = env.deploy;
+    }
+
+    deployments[depName] = {
+      name: depName,
+      root: path.resolve(...depPaths),
+      type: depModuleType,
+      config: depConfig,
+    };
+  });
+
+  Object.values(deployments).forEach(async (dep) => {
+    const depModule = (await import(dep.type)).default(dep);
+
+    // deploy command to use
+    let command = depModule.getDeployCommand(dep.config);
+
+    if (command) {
+      console.info(`${dep.name}: Executing '${command}' in ${dep.root}`);
+
+      const child = spawnSync(command, {
+        stdio: "inherit",
+        shell: true,
+        cwd: dep.root,
+      });
+    } else {
+      console.error(`${dep.name}: No deploy command. Skipping...`);
+    }
+  });
+}
+
+// helper function for loading topologies
 async function getTopology(topologyFilename) {
   const resolvedTopologyFilename = path.resolve(topologyFilename);
   const imports = await import(resolvedTopologyFilename);

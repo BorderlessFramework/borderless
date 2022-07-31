@@ -2,9 +2,10 @@ export default {
   packages: [
     {
       name: "main-site",
+      type: "@borderlessjs/env-node",
       deploy: {
-        type: "@borderlessjs/env-node",
         host: "www.mysite.com",
+        provider: "gcloud",
       },
     },
   ],
@@ -42,6 +43,10 @@ export default {
         url: (name) => `/another/${name}`,
         serialization: "json",
         method: "post",
+      },
+      deploy: {
+        host: "another.mysite.com",
+        provider: "aws",
       },
     },
   ],
