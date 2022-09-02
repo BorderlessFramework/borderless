@@ -2,7 +2,7 @@
   "name": "@borderlessjs/borderless",
   "version": "0.0.3-dev",
   "description": "Framework for transparently running code anywhere",
-  "main": "index.js",
+  "main": "borderless.js",
   "scripts": {
     "start": "cd app_mockup/dist/main-site/; node server/server.js",
     "clean": "rm -rf test/example/inst/ test/example/build/ test/example/dist/",
