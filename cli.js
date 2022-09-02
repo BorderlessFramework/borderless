@@ -246,20 +246,15 @@ async function generate(topologyFilename, instFolder, buildFolder) {
   topology.environments.forEach(async (env) => {
     let destinationPaths = [buildFolder, env.name];
 
-    const borderlessModule = (await import(env.type)).default(env);
-
-    // folder with  boilerplate code for the module
-    let boilerplate = borderlessModule.boilerplate;
-
     // folder where to keep all output for this environment
     let buildRoot = path.resolve(...destinationPaths);
 
-    if (boilerplate) {
-      fse.copySync(boilerplate, buildRoot);
+    if (env.boilerplate) {
+      fse.copySync(env.boilerplate, buildRoot);
     }
 
     // relative path where to copy instrumented code into
-    let buildSrc = path.resolve(buildRoot, borderlessModule.src);
+    let buildSrc = path.resolve(buildRoot, env.src);
 
     fse.copySync(instFolder, buildSrc);
   });
@@ -271,18 +266,15 @@ async function build(topologyFilename, buildFolder) {
   topology.environments.forEach(async (env) => {
     let destinationPaths = [buildFolder, env.name];
 
-    const borderlessModule = (await import(env.type)).default(env);
-
-    // build command to use
-    let buildCommand = borderlessModule.buildCommand;
-
     // folder where to run the build command
     let buildRoot = path.resolve(...destinationPaths);
 
-    if (buildCommand) {
-      console.info(`${env.name}: Executing '${buildCommand}' in ${buildRoot}`);
+    if (env.buildCommand) {
+      console.info(
+        `${env.name}: Executing '${env.buildCommand}' in ${buildRoot}`
+      );
 
-      const child = spawnSync(buildCommand, {
+      const child = spawnSync(env.buildCommand, {
         stdio: "inherit",
         shell: true,
         cwd: buildRoot,
@@ -320,10 +312,8 @@ async function pack(topologyFilename, buildFolder, distFolder) {
       distPaths.push(env.path);
     }
 
-    const borderlessModule = (await import(env.type)).default(env);
-
-    if (borderlessModule.buildOutputFolder) {
-      buildPaths.push(borderlessModule.buildOutputFolder);
+    if (env.buildOutputFolder) {
+      buildPaths.push(env.buildOutputFolder);
     }
 
     // folder with output of the module build

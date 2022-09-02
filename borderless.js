@@ -35,4 +35,15 @@ function register(topology) {
   return (name, code) => execOrUpstream(topology, name, code);
 }
 
+export class BorderlessEnvironment {
+  constructor(name, config, src, buildOutputFolder, boilerplate, buildCommand) {
+    this.name = name;
+    this.config = config;
+    this.src = src;
+    this.buildOutputFolder = buildOutputFolder;
+    this.boilerplate = boilerplate;
+    this.buildCommand = buildCommand;
+  }
+}
+
 export default register;

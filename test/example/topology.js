@@ -1,3 +1,10 @@
+import HTMLEnvironment from "@borderlessjs/env-html";
+import MainThreadEnvironment from "@borderlessjs/env-main-thread";
+import NodeEnvironment from "@borderlessjs/env-node";
+
+const MY_NODE_BACKEND_ID = "my-node-backend";
+const MY_MAIN_THREAD_ID = "my-app-in-browser";
+
 export default {
   packages: [
     {
@@ -10,24 +17,18 @@ export default {
     },
   ],
   environments: [
-    {
-      name: "static-html-page",
-      type: "@borderlessjs/env-html",
+    new HTMLEnvironment("static-html-page", {
       package: "main-site",
-      upstream: "my-app-in-browser",
+      upstream: MY_MAIN_THREAD_ID,
       path: "pub/",
-    },
-    {
-      name: "my-app-in-browser",
-      type: "@borderlessjs/env-main-thread",
+    }),
+    new MainThreadEnvironment(MY_MAIN_THREAD_ID, {
       local: ["blah", "glog"],
-      upstream: "my-node-backend",
+      upstream: MY_NODE_BACKEND_ID,
       package: "main-site",
       path: "pub/js/",
-    },
-    {
-      name: "my-node-backend",
-      type: "@borderlessjs/env-node",
+    }),
+    new NodeEnvironment(MY_NODE_BACKEND_ID, {
       input: {
         url: (name) => `/backend/${name}`,
         serialization: "json",
@@ -35,10 +36,8 @@ export default {
       },
       package: "main-site",
       path: "server/",
-    },
-    {
-      name: "another-node-backend",
-      type: "@borderlessjs/env-node",
+    }),
+    new NodeEnvironment("another-node-backend", {
       input: {
         url: (name) => `/another/${name}`,
         serialization: "json",
@@ -48,6 +47,6 @@ export default {
         host: "another.mysite.com",
         provider: "aws",
       },
-    },
+    }),
   ],
 };
