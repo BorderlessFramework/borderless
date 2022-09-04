@@ -293,11 +293,11 @@ async function pack(topologyFilename, buildFolder, distFolder) {
 
   Object.values(topology.packages).forEach((pkg) => {
     const distRoot = [distFolder, pkg.name];
-    console.info(`${pkg.name} (${path.resolve(...distRoot)}: -`);
+    console.info(`${pkg.name} (${path.resolve(...distRoot)})`);
 
     Object.values(pkg.environments).forEach((env) => {
       const buildPaths = [buildFolder, env.name];
-      const distPaths = [distFolder, pkg.name];
+      const distPaths = [];
 
       // if environment defined a path, add it
       if (env.config.path) {
@@ -312,11 +312,11 @@ async function pack(topologyFilename, buildFolder, distFolder) {
       let buildOutputRoot = path.resolve(...buildPaths);
 
       // folder where to keep all output for this environment
-      let packRoot = path.resolve(...distPaths);
+      let packRoot = path.resolve(...distRoot, ...distPaths);
 
       fse.copySync(buildOutputRoot, packRoot);
 
-      console.info(`  ${packRoot} -> ${env.name}`);
+      console.info(`  ./${distPaths.join("/")} -> ${env.name}`);
     });
   });
 }
