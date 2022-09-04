@@ -243,7 +243,7 @@ async function generate(topologyFilename, instFolder, buildFolder) {
 
   const topology = await getTopology(topologyFilename);
 
-  topology.environments.forEach(async (env) => {
+  Object.values(topology.environments).forEach(async (env) => {
     let destinationPaths = [buildFolder, env.name];
 
     // folder where to keep all output for this environment
@@ -263,7 +263,7 @@ async function generate(topologyFilename, instFolder, buildFolder) {
 async function build(topologyFilename, buildFolder) {
   const topology = await getTopology(topologyFilename);
 
-  topology.environments.forEach(async (env) => {
+  Object.values(topology.environments).forEach(async (env) => {
     let destinationPaths = [buildFolder, env.name];
 
     // folder where to run the build command
@@ -291,40 +291,33 @@ async function pack(topologyFilename, buildFolder, distFolder) {
 
   const topology = await getTopology(topologyFilename);
 
-  topology.environments.forEach(async (env) => {
-    let buildPaths = [buildFolder, env.name];
-    let distPaths = [distFolder];
+  Object.values(topology.packages).forEach((pkg) => {
+    const distRoot = [distFolder, pkg.name];
+    console.info(`${pkg.name} (${path.resolve(...distRoot)}: -`);
 
-    // if environment outputs into a packlage use it
-    // instead of environment name
-    if (env.package) {
-      const targetPackage = topology.packages.find(
-        (pkg) => pkg.name === env.package
-      );
+    Object.values(pkg.environments).forEach((env) => {
+      const buildPaths = [buildFolder, env.name];
+      const distPaths = [distFolder, pkg.name];
 
-      distPaths.push(targetPackage.name);
-    } else {
-      distPaths.push(env.name);
-    }
+      // if environment defined a path, add it
+      if (env.config.path) {
+        distPaths.push(env.config.path);
+      }
 
-    // if environment defined a path, add it
-    if (env.path) {
-      distPaths.push(env.path);
-    }
+      if (env.buildOutputFolder) {
+        buildPaths.push(env.buildOutputFolder);
+      }
 
-    if (env.buildOutputFolder) {
-      buildPaths.push(env.buildOutputFolder);
-    }
+      // folder with output of the module build
+      let buildOutputRoot = path.resolve(...buildPaths);
 
-    // folder with output of the module build
-    let buildOutputFolder = path.resolve(...buildPaths);
+      // folder where to keep all output for this environment
+      let packRoot = path.resolve(...distPaths);
 
-    // folder where to keep all output for this environment
-    let packRoot = path.resolve(...distPaths);
+      fse.copySync(buildOutputRoot, packRoot);
 
-    fse.copySync(buildOutputFolder, packRoot);
-
-    console.info(`${env.name}: Output in ${packRoot}`);
+      console.info(`  ${packRoot} -> ${env.name}`);
+    });
   });
 }
 
