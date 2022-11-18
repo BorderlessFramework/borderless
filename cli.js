@@ -324,56 +324,22 @@ async function pack(topologyFilename, buildFolder, distFolder) {
 async function deploy(topologyFilename, distFolder) {
   const topology = await getTopology(topologyFilename);
 
-  const deployments = [];
-
-  topology.environments.forEach(async (env) => {
-    let depPaths = [distFolder];
-    let depModuleType;
-    let depName;
-    let depConfig;
-
-    // if environment outputs into a packlage,
-    // use it instead of the environment
-    if (env.package) {
-      const targetPackage = topology.packages.find(
-        (pkg) => pkg.name === env.package
-      );
-
-      depPaths.push(targetPackage.name);
-      depModuleType = targetPackage.type;
-      depName = targetPackage.name;
-      depConfig = targetPackage.deploy;
-    } else {
-      depPaths.push(env.name);
-      depModuleType = env.type;
-      depName = env.name;
-      depConfig = env.deploy;
-    }
-
-    deployments[depName] = {
-      name: depName,
-      root: path.resolve(...depPaths),
-      type: depModuleType,
-      config: depConfig,
-    };
-  });
-
-  Object.values(deployments).forEach(async (dep) => {
-    const depModule = (await import(dep.type)).default(dep);
-
+  Object.values(topology.packages).forEach(async (pkg) => {
     // deploy command to use
-    let command = depModule.getDeployCommand(dep.config);
+    let command = pkg.getDeployCommand();
+
+    const root = path.resolve(distFolder, pkg.name);
 
     if (command) {
-      console.info(`${dep.name}: Executing '${command}' in ${dep.root}`);
+      console.info(`${pkg.name}: Executing '${command}' in ${root}`);
 
       const child = spawnSync(command, {
         stdio: "inherit",
         shell: true,
-        cwd: dep.root,
+        cwd: root,
       });
     } else {
-      console.error(`${dep.name}: No deploy command. Skipping...`);
+      console.error(`${pkg.name}: No deploy command. Skipping...`);
     }
   });
 }

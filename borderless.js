@@ -86,6 +86,14 @@ export class BorderlessPackage {
     this.environments = environments;
   }
 
+  getDeployCommand(config) {
+    if (this.config.buildCommand) {
+      return this.config.buildCommand;
+    } else {
+      return this.environments[0].config.buildCommand;
+    }
+  }
+
   addEnvironment(environment) {
     this.environments.push(environment);
   }
