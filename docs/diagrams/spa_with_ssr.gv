@@ -1,0 +1,144 @@
+digraph SPA_with_SSR {
+  label="Single Page Application (SPA) with Server-Side Rendering (SSR)"
+  // rankdir="LR";
+
+  node [shape=point]
+  edge [color=dodgerblue4]
+  
+  subgraph cluster_browser {
+    render
+    css_request
+    html_request
+
+    subgraph cluster_main {
+      router_js
+      controller_js
+
+      subgraph cluster_models {
+        user_model_js
+        catalog_model_js
+        inventory_model_js
+
+        label="Models"
+        style="dotted"
+      }
+
+      subgraph cluster_views {
+          view_js
+          header_js
+          main_js
+          footer_js
+          
+          label="Views"
+          style="dotted"
+      }
+
+      label="JS Main Thread"
+    }
+
+    label="Browser"
+  }
+
+  
+  subgraph cluster_web_server {
+    router
+    controller
+
+    subgraph cluster_models {
+      user_model
+      catalog_model
+      inventory_model
+
+      label="Models"
+      style="dotted"
+    }
+
+    subgraph cluster_views {
+      view
+      header
+      main
+      footer
+      
+      label="Views"
+      style="dotted"
+    }
+      
+    label="Web Server"
+  }
+  
+  subgraph cluster_api {
+    user_api
+    catalog_api
+    inventory_api
+      
+    label="API"
+  }
+  
+  subgraph cluster_db {
+    user_db
+    catalog_db
+    inventory_db
+      
+    label="Database"
+  }
+
+  render [shape=doubleoctagon]
+  html_request [shape=ellipse label="HTML"]
+  css_request [shape=ellipse label="CSS"  style=dotted]
+
+  render -> html_request
+  render -> css_request [style=dotted color=gray arrowhead=none]
+  render -> router_js
+
+  html_request -> router
+    
+  router -> controller
+  controller -> view
+
+  header -> user_model
+  
+  main -> catalog_model
+  main -> inventory_model
+  
+  user_model -> user_api [arrowhead=vee, color=darkolivegreen4]
+  catalog_model -> catalog_api [arrowhead=vee, color=darkolivegreen4]
+  inventory_model -> inventory_api [arrowhead=vee, color=darkolivegreen4]
+
+  router_js -> controller_js
+  controller_js -> view_js
+
+  header_js -> user_model_js
+  main_js -> catalog_model_js
+  main_js -> inventory_model_js
+  
+  view_js -> header_js
+  view_js -> main_js
+  view_js -> footer_js
+
+  view_js [shape=component label="" width=0.2 height=0.15]
+  header_js [shape=component label="" width=0.2 height=0.15]
+  main_js [shape=component label="" width=0.2 height=0.15]
+  footer_js [shape=component label="" width=0.2 height=0.15]
+  
+
+  user_model_js -> user_api [arrowhead=vee, color=darkolivegreen4]
+  catalog_model_js -> catalog_api [arrowhead=vee, color=darkolivegreen4]
+  inventory_model_js -> inventory_api [arrowhead=vee, color=darkolivegreen4]
+   
+  user_api -> user_db [color=black arrowhead=inv]
+  catalog_api -> catalog_db [color=black arrowhead=inv]
+  inventory_api -> inventory_db [color=black arrowhead=inv]
+  
+  user_db [shape=cylinder label="" width=0.2 height=0.15]
+  catalog_db [shape=cylinder label="" width=0.2 height=0.15]
+  inventory_db [shape=cylinder label="" width=0.2 height=0.15]
+
+  view [shape=component label="" width=0.2 height=0.15]
+  header [shape=component label="" width=0.2 height=0.15]
+  main [shape=component label="" width=0.2 height=0.15]
+  footer [shape=component label="" width=0.2 height=0.15]
+  
+  view -> header
+  view -> main
+  view -> footer
+}

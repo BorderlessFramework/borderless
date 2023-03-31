@@ -1,0 +1,87 @@
+digraph Edge_Router {
+  label="Edge Router Web Applications"
+  // rankdir="LR";
+
+  node [shape=point]
+  edge [color=dodgerblue4]
+  
+  subgraph cluster_browser {
+    render
+    css_request
+    html_request
+
+    label="Browser"
+  }
+
+  subgraph cluster_edge_route {
+    router [label="Router" shape=oval]
+    label="Edge"
+  }
+  
+  subgraph cluster_web_server {
+    controller
+
+    subgraph cluster_models {
+      user_model
+      catalog_model
+      inventory_model
+
+      label="Models"
+      style="dotted"
+    }
+
+    subgraph cluster_views {
+      view
+      header
+      main
+      footer
+      
+      label="Views"
+      style="dotted"
+    }
+      
+    label="Web Server"
+  }
+
+  subgraph cluster_db {
+    user_db
+    catalog_db
+    inventory_db
+      
+    label="Database"
+  }
+
+  render [shape=doubleoctagon]
+  html_request [shape=ellipse label="HTML"]
+  css_request [shape=ellipse label="CSS" style="dotted"]
+
+  render -> html_request
+  render -> css_request [style="dotted" color=gray]
+
+  html_request -> router
+    
+  router -> controller
+  controller -> view
+
+  header -> user_model
+  
+  main -> catalog_model
+  main -> inventory_model
+  
+  user_model -> user_db [color=black arrowhead=inv]
+  catalog_model -> catalog_db [color=black arrowhead=inv]
+  inventory_model -> inventory_db [color=black arrowhead=inv]
+  
+  user_db [shape=cylinder label="" width=0.2 height=0.15]
+  catalog_db [shape=cylinder label="" width=0.2 height=0.15]
+  inventory_db [shape=cylinder label="" width=0.2 height=0.15]
+
+  view [shape=component label="" width=0.2 height=0.15]
+  header [shape=component label="" width=0.2 height=0.15]
+  main [shape=component label="" width=0.2 height=0.15]
+  footer [shape=component label="" width=0.2 height=0.15]
+  
+  view -> header
+  view -> main
+  view -> footer
+}
