@@ -241,6 +241,9 @@ We envision multiple types of topology decisions:
 - Run-time decisions based on users device capabilities, e.g. network speed, CPU power, battery levels, etc. Off-loading large computations to the server in case of low-powered devices or running them with much lower latency in web workers, for example (there multiple use-cases with data analysis and visualization, machine learning, media format processing and etc.)
 - Run-time decisions based on users location or content preferences, e.g. geo-fencing or language
 
+Ultimately we'd want to be able to reproduce most of existing topologies that are well established in the industry.
+Here are several [diagrams that illustrate existing topologies](docs/diagrams/topologies.md).
+
 #### Machine Learning
 
 Topology can also be dynamically optimized based on telemetry that comes from all the environments about execution speeds, failure rates and business outcomes.
