@@ -167,9 +167,9 @@ So we encourage you to keep the interplanetary use-case in your mind when you di
 
 ## How Will It Work?
 
-Developers use a language that can be executed / transpiled or compiled into the target running on all supported platforms. At the beginning we will use JavaScript, but WebAssembly can be another alternative for web, other languages compiled into target executables potentially too for non-web applications.
+Developers use a language that can be executed / transpiled or compiled into target languages / executables, together covering all supported platforms. At the beginning we will use JavaScript, but WebAssembly can be another alternative for web, other languages compiled into target executables potentially too for non-web applications.
 
-All the functions that can be called are annotated or "registered" providing all the metadata needed to make a decision which environments can support running it and which have to delegate to the upstream execution environment(or potentially a mesh in the future).
+All the functions that can be called are annotated or "registered" providing all the metadata needed to make a decision which environments can support running it and which have to delegate to the upstream execution environment (or potentially a mesh in the future).
 
 Initially, registration will have to happen in the code, but we can imagine a compiler that could read annotations and even do code analysis to deduce some of the properties of the code.
 
@@ -181,7 +181,7 @@ It will also include the environment configuration file `environment.js` ([1](di
 
 As code get wrapped into topology decision logic, it can also include speed instrumentation that would report telemetry data to the operations datacenter and help with visual understanding of code execution and will allow operators to modify and deploy topology changes as needed.
 
-Same telemetry data could be used to [dynamically change the topology](#machine-learning).
+Same telemetry data could also be used to dynamically change the topology using [Machine Learning](#machine-learning) and other AI technologies.
 
 ### Code registration requirements
 
@@ -215,7 +215,7 @@ This framework should unify various execution patterns in order to be able to co
 
 - Some operations can execute code upon request so users get the latest and greatest data (traditional, 3-tier web development)
 - Some operations require real-time visualization and very low latency (e.g. gameplay)
-- Some operations can be done when data changes, but can be less than freshest (event-based build pipeline)
+- Some operations can be done when data changes, but can be less than freshest (event-based data & build pipeline)
 - Some environments can have intermittent connectivity (e.g. progressive web apps, mobile apps) and should have flexible data policies and fallbacks for all, some, or no data (based on business functionality), but can produce a useful feedback for the user in as many cases as possible
 - Some operations can be performed in a batch manner because data freshness policy accepts large latency, but data volumes, CPU and power consumption are a large and require cost optimization (machine learning applications, vendor data sync, etc.)
 
@@ -225,7 +225,7 @@ Mobile applications and web applications share majority of the logic and data re
 
 ### Notes on IoT devices
 
-IoT devices usually have low rendering requirements, and some data consumtion requirements, but often concentrate on producing data and sending it back into central storage.
+IoT devices usually have low rendering requirements, and some data consumption requirements, but often concentrate on producing data and sending it back into central storage.
 
 This "data source" behavior can also be included here because this potentially applies to other applications like telemetry or business analytics flows.
 
@@ -236,10 +236,10 @@ We envision multiple types of topology decisions:
 - Configuration - similar to traditional operations / DevOps workflow that defines the systems code deploys to
 - Run-time scalability adjustments - similar to modern DevOps workflows that scales some types of environments up/down in order to support consumption needs or to selectively shut down parts of the system in case of an outage
 - Run-time decisions based on environment capabilities:
-- Progressively Enhanced Single-page Applications that use so-called Server-Side rendering (SSR) can use one topology to produce HTML for initial view, but another topology for subsequent views that use front-end routing
-- Progressive Web Applications (PWAs) use one topology for first request (when user has never been to the site), but another for subsequent requests when Service Worker (installed after first request) can take over some operations.
-- Run-time decisions based on users device capabilities, e.g. network speed, CPU power, battery levels, etc. Off-loading large computations to the server in case of low-powered devices or running them with much lower latency in web workers, for example (there multiple use-cases with data analysis and visualization, machine learning, media format processing and etc.)
-- Run-time decisions based on users location or content preferences, e.g. geo-fencing or language
+  - Progressively Enhanced Single-page Applications that use so-called Server-Side rendering (SSR) can use one topology to produce HTML for initial view, but another topology for subsequent views that use front-end routing
+  - Progressive Web Applications (PWAs) use one topology for first request (when user has never been to the site), but another for subsequent requests when Service Worker (installed after first request) can take over some operations.
+  - Run-time decisions based on users device capabilities, e.g. network speed, CPU power, battery levels, etc. Off-loading large computations to the server in case of low-powered devices or running them with much lower latency in web workers, for example (there multiple use-cases with data analysis and visualization, machine learning, media format processing and etc.)
+  - Run-time decisions based on users location or content preferences, e.g. geo-fencing or language
 
 Ultimately we'd want to be able to reproduce most of existing topologies that are well established in the industry.
 Here are several [diagrams that illustrate existing topologies](docs/diagrams/topologies.md).
@@ -252,13 +252,13 @@ Machine learning can be used, in analogy with how optimizing JIT compilers optim
 
 ## Participants
 
-I say "we" when referring to the team that would work on this project, but so far this was only born in my brain.
+I say "we" when referring to the team that would work on this project, but so far this was only born in my (Sergey's) brain.
 
 I talked about it to a few people and hope to attract more eyes and brains to this project and hopefully, it will lead to the project's progress and success.
 
 Feel free to reach out to me in the issue tracker if you have questions, comments, or suggestions.
 
-When more people will start contributing to this project, I'll update this section and include you all below:
+When more people will start contributing to this project, we all can update this section and include our information below:
 
 - [Sergey Chernyshev](https://www.sergeychernyshev.com/)
 - ... your name could be here ...
