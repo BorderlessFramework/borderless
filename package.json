@@ -1,22 +1,32 @@
 {
-  "name": "borderless",
-  "version": "1.0.0",
+  "name": "@borderlessjs/borderless",
+  "version": "0.0.3-dev",
   "description": "Framework for transparently running code anywhere",
-  "main": "index.js",
+  "main": "borderless.js",
   "scripts": {
-    "start": "cd dist/main-site/; node server/server.js",
+    "start": "cd app_mockup/dist/main-site/; node server/server.js",
+    "clean": "rm -rf test/example/inst/ test/example/build/ test/example/dist/",
+    "dev:npm-publish": "npm publish --access public",
+    "dev:link-local": "npm link @borderlessjs/env-html @borderlessjs/env-node @borderlessjs/env-main-thread",
     "diagrams": "cd docs/diagrams; dot -Tsvg -O *.gv; mv *.svg images/",
-    "compile": "node compiler.js source.js output.js"
+    "npm-publish": "npm publish --access public"
+  },
+  "bin": {
+    "borderless": "./cli.js"
   },
   "author": "Sergey Chernyshev",
   "type": "module",
   "repository": {
-    "url": "https://github.com/sergeychernyshev/borderless",
+    "url": "https://github.com/BorderlessFramework/borderless",
     "type": "git"
   },
   "dependencies": {
     "@babel/core": "^7.18.9",
     "@babel/traverse": "^7.18.9",
-    "express": "^4.18.1"
+    "@borderlessjs/babel-plugin": "^0.0.1",
+    "express": "^4.18.1",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.3",
+    "yargs": "^17.5.1"
   }
 }

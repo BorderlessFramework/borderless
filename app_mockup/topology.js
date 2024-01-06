@@ -11,13 +11,15 @@
  * (currently all 3 are "deployed" together to a server.js node server)
  */
 module.exports = {
-  packages: {
-    name: "main-site",
-    deploy: {
-      type: "node",
-      host: "www.mysite.com",
+  packages: [
+    {
+      name: "main-site",
+      deploy: {
+        type: "node",
+        host: "www.mysite.com",
+      },
     },
-  },
+  ],
   environments: [
     {
       name: "static-html-page",

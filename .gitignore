@@ -1,3 +1,6 @@
-node_modules
 output.js
 .DS_Store
+/node_modules/
+/test/example/dist/
+/test/example/inst/
+/test/example/build/
