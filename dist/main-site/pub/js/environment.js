@@ -5,7 +5,7 @@
  * (e.g. sets a global "environment" constant to be used in the app code
  * and expects a global LOCAL constant to be provided by borderless.js)
  *
- * This environment terminates "blag" and "grog" calls locally
+ * This environment terminates "blah" and "grog" calls locally
  * and forwards the rest of the calls to upstream
  */
 const environment = {

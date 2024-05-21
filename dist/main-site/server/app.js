@@ -12,7 +12,7 @@ const grog = register("grog", async (a, b, c) => `GROG: ${a} / ${b} / ${c}`);
 
 const blah = register(
   "blah",
-  async (a) => (await grog(a, "foo", "bar")) + (await borg(a))
+  async (a) => (await grog(a, "foo", "bar")) + " eats " + (await borg(a))
 );
 
 const borg = register("borg", async (x) => await smorg(x, 25));
